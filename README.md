@@ -18,8 +18,8 @@ This is a face recognition application that uses Electron for the front-end and 
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/sondercs/face_recognition_app.git
-    cd face_recognition_app
+    git clone https://github.com/sondercs/face-recognition-app.git
+-cd face_recognition_app
     ```
 
 2. Create and activate a virtual environment:
