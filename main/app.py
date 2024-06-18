@@ -4,8 +4,11 @@ import json
 import os
 from dotenv import load_dotenv
 import time
+from flask import Flask, request, jsonify
 
-# Carrega as váriaveis do DOTENV
+app = Flask(__name__)
+
+# Carrega as variáveis do .env
 load_dotenv()
 
 # Chaves da API
@@ -16,6 +19,10 @@ Compare_Url = os.getenv('COMPARE_URL')
 
 # Definir a pasta que contém as imagens conhecidas
 known_images_folder = "users-pictures"
+
+# Crie a pasta se ela não existir
+if not os.path.exists(known_images_folder):
+    os.makedirs(known_images_folder)
 
 # Carregar as imagens conhecidas e seus nomes
 known_faces = []
@@ -45,15 +52,17 @@ if not video_capture.isOpened():
     print("Erro ao acessar a webcam.")
     exit()
 
-print("Posicione-se na frente da webcam. Pressione 'q' para sair.")
+@app.route('/upload', methods=['POST'])
+def upload():
+    file = request.files['file']
+    file.save(os.path.join(known_images_folder, file.filename))
+    return 'File uploaded successfully!'
 
-while True:
-    # Capturar um único frame da webcam
-    time.sleep(1)
+@app.route('/recognize', methods=['POST'])
+def recognize():
     ret, frame = video_capture.read()
     if not ret:
-        print("Erro ao capturar a imagem.")
-        break
+        return jsonify({"error": "Erro ao capturar a imagem."}), 500
 
     # Redimensionar o frame para processamento mais rápido
     small_frame = cv2.resize(frame, (0, 0), fx=0.5, fy=0.5)
@@ -82,23 +91,13 @@ while True:
                     'face_token2': known_face,
                 })
                 result = response.json()
-                if result['confidence'] > 80:  # Ajuste o limiar conforme necessário
-                    print(f"Bem-vindo {name}!")
-                    break
-        else:
-            print("Nenhum rosto detectado.")
+                if result.get('confidence', 0) > 80:  # Ajuste o limiar conforme necessário
+                    return jsonify({"name": name})
 
-    # Mostrar o frame da webcam
-    cv2.imshow('Webcam', frame)
+        return jsonify({"error": "Nenhum rosto detectado ou sem correspondência."}), 404
 
-    # Sair do loop se a tecla 'q' for pressionada
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-
-    # Remover o arquivo temporário
     if os.path.exists(temp_frame_path):
         os.remove(temp_frame_path)
 
-# Liberar a webcam e fechar todas as janelas
-video_capture.release()
-cv2.destroyAllWindows()
+if __name__ == '__main__':
+    app.run(port=5001)

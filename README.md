@@ -1,62 +1,77 @@
-# Facial Recognition using DeepFace
+# Face Recognition App
 
-This project uses the DeepFace library along with OpenCV to perform real-time facial recognition using a webcam. It captures video frames from the webcam, detects faces using Haar cascades, and matches them against known images stored locally.
+This is a face recognition application that uses Electron for the front-end and Flask for the back-end. It leverages the Face++ API for face detection and comparison.
 
-## Setup
+## Setup and Installation
 
-1. **Clone the repository:**
+### Prerequisites
 
-   ```bash
-   git clone https://github.com/sondercs/Facial-Recognition.git
-   cd Facial-Recognition
-   ```
+- Python 3.x
+- Node.js and npm
+- Flask
+- OpenCV
+- Requests
+- Dotenv
+- Electron
 
-2. **Install dependencies:**
+### Installation Steps
 
-   Make sure you have Python 3.12.1 installed. Use pip to install required libraries:
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/sondercs/face_recognition_app.git
+    cd face_recognition_app
+    ```
 
-   ```bash
-   pip install deepface opencv-python
-   ```
+2. Create and activate a virtual environment:
+    ```bash
+    python -m venv venv
+    source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+    ```
 
-3. **Download the Haar Cascade file:**
+3. Install the Python dependencies:
+    ```bash
+    pip install -r main/requirements.txt
+    ```
 
-   The facial detection uses the Haar Cascade classifier from OpenCV. You can download it from the official OpenCV GitHub repository or use the default one provided with OpenCV.
+4. Install the Node.js dependencies:
+    ```bash
+    npm install
+    ```
 
-   ```python
-   # Example using OpenCV's provided Haar Cascade
-   face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-   ```
+5. Configure the environment variables in the `.env` file (You need to create):
+    ```plaintext
+    API_KEY=your_api_key
+    API_SECRET=your_api_secret
+    DETECT_URL=https://api-us.faceplusplus.com/facepp/v3/detect
+    COMPARE_URL=https://api-us.faceplusplus.com/facepp/v3/compare
+    ```
+
+6. Create the `users-pictures` folder in the root of the project and add known face images (format `.jpg`, `.jpeg`, `.png`).
+
+7. Start the Flask app:
+    ```bash
+    cd main
+    python app.py
+    ```
+
+8. Start the Electron app:
+    ```bash
+    cd ..
+    npm start
+    ```
 
 ## Usage
 
-1. **Prepare known images:**
+- **Upload Known Images**: Use the form to upload images of known faces.
+- **Facial Recognition**: Click the "Recognize Face" button to capture an image from the webcam and compare it with known images.
 
-   Add images of individuals you want to recognize in the `users-pictures` folder. Name each image with the person's name (e.g., `Joao.jpg`, `Maria.jpg`).
+## Project Structure
 
-2. **Run the application:**
+### Back-end (Flask)
+- `main/app.py`: Contains routes and logic for uploading images, capturing webcam frames, detecting faces, and comparing faces.
 
-   Execute the main Python script to start the facial recognition:
-
-   ```bash
-   python main.py
-   ```
-
-3. **Interact with the application:**
-
-   - Position yourself in front of the webcam.
-   - Press 'q' to exit the application.
-   - The application will attempt to recognize each face captured by the webcam against the known images.
-   - If a match is found, it will print "Welcome [person's name]!".
-
-## Notes
-
-- Ensure proper lighting conditions and avoid obstructing the face for better recognition accuracy.
-- Adjust the `check_interval` variable in `main.py` to control how often the application performs recognition checks.
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-```
-
-Replace `sondercs` with your GitHub username and ensure the project structure and file names match those in your actual repository (`main.py`, `users-pictures` folder, etc.). This README provides basic setup instructions, usage guidelines, and customization tips for your facial recognition project using DeepFace and OpenCV. Adjust and expand it as needed based on additional features or specific requirements of your project.
+### Front-end (Electron)
+- `renderer/index.html`: Main HTML page.
+- `renderer/styles.css`: CSS styles.
+- `renderer/scripts.js`: JavaScript for handling facial recognition requests and displaying results.
+- `main.js`: Main Electron process file.

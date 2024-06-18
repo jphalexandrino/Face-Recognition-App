@@ -1,2 +1,5 @@
 .env
 temp_frame.jpg
+.Tests
+venv
+node_modules
