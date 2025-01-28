@@ -1,4 +1,5 @@
 # Face Recognition App
+![Banner](Face-Recognition-App.png)
 ![Exemple image](ExempleImage.png)
 This is a face recognition application that uses Electron for the front-end and Flask for the back-end. It leverages the Face++ API for face detection and comparison.
 
